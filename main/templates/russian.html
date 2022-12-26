@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col">
+    <div class="mcard">
+      <p class="mcard-title" style="font-size: 22px; font-weight: normal; color: #d52a33">{{ header }}</p>
+      {% for path in pages %}
+      <div class="text-center">
+        <img class="mcard-img" src="/media/{{path}}">
+      </div>
+      <br>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

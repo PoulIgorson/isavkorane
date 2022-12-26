@@ -1,0 +1,64 @@
+body {
+    min-width: 1000px;
+
+    font: normal normal 13px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+    color: #000000;
+    background: #fcfbf5 none repeat scroll top left;
+
+    margin: 0;
+    padding: 0 0 1px;
+}
+
+header h1 {
+    font: normal normal 48px Georgia, Utopia, 'Palatino Linotype', Palatino, serif;
+    color: #333333
+}
+
+.nav-item {
+    font: normal bold 20px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+    color:#333333
+}
+.nav-item :hover {
+    color: #fcfbf5;
+}
+.nav-link {
+    color:#333333
+}
+.nav-link-selected {
+    background: transparent url(//www.blogblog.com/1kt/awesomeinc/tabs_gradient_light.png) repeat-x scroll 0 -100px;
+    color: #fcfbf5;
+}
+
+.mcard {
+    background-color: #fefdfa;
+    border: 1px solid #aab123;
+    padding: 0 15px 15px;
+    margin: 20px -16px;
+    box-shadow: 0 0 20px rgb(0 0 0 / 20%);
+    border-radius: 5px;
+    line-height: 1.4;
+}
+
+.mcard-title {
+    margin: 0 -0;
+    padding: 0.6em 0 0.5em;
+    border-bottom: 1px solid transparent;
+    font: normal bold 14px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+    color: black;
+}
+
+.mcard-content {
+    margin: 0 -0;
+    padding: 7px 0 0;
+    line-height: 18.2000007629395px;
+    font-family: Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+    font-size: 13px;
+}
+
+.mcard-img {
+    padding: 8px;
+    background: #ffffff;
+    border: 1px solid #cccccc;
+    box-shadow: 0 0 20px rgb(0 0 0 / 20%);
+    border-radius: 5px;
+}
