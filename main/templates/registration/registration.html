@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+  <div class="mcard">
+    <div class="mcard-content">
+      <form action="{% url 'registration' %}" method="POST" autocomplete="off">
+        {% csrf_token %}
+        {{ form | crispy }}
+        <button type="submit" value="Войти" class="btn mbtn">Регистрация</button>
+        <p class="login_ref">Есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+      </form>
+    </div>
+  </div>
+{% endblock %}

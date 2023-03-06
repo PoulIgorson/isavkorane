@@ -1,0 +1,18 @@
+{% extends 'base/base.html' %}
+
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-5">
+    <form class="mcard justify-content-center p-2" method="POST" autocomplete="off">
+      <div class="mcard-content">
+        {% csrf_token %}
+        {{ form | crispy }}
+        <button type="submit" class="btn mbtn">Создать</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

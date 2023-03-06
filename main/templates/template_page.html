@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{{ csrf_token }}
+<div class="row">
+  <div class="col">
+    <div class="mcard">
+      <p class="mcard-title" style="font-size: 22px; font-weight: normal; color: #d52a33">{{ page.header }}</p>
+      {% if request.user.is_superuser %}
+      <div class="row">
+        <div class="col text-center">
+          <button class="btn mbtn-sm" onclick="addBlock('text', 0)">+ Текст</button>
+          <button class="btn mbtn-sm" onclick="addBlock('image', 0)">+ Изображение</button>
+        </div>
+      </div>
+      {% endif %}
+      {% for block in page.block_set.all %}
+        <div class="mcard-content" id="block_{{ block.id }}">
+          <div class="row">
+            <div class="col">
+              <div class="text-center">
+                {% if block.type == TypeBlock.IMAGE %}
+                  <img class="mcard-img" src="/media/{{ block.image.path }}">
+                  {% if request.user.is_superuser %}
+                    <input type="image" class="form-control">
+                    <button class="btn mbtn-sm" onclick="replaceImage(block.id)" style="display: inline-block">Сохранить</button>
+                  {% endif %}
+                {% elif block.type == TypeBlock.TEXT %}
+                  <div class="mcard-text">
+                    {% if request.user.is_superuser %}
+                      <textarea class="form-control">
+                        {{ block.text }}
+                      </textarea>
+                    {% else %}
+                      <pre>{{ block.text }}</pre>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% if request.user.is_superuser %}
+          <div class="row justify-content-center">
+            <div class="col">
+              <button class="btn mbtn" onclick="addBlock('text', block.id)">+ Текст</button>
+              <button class="btn mbtn" onclick="addBlock('image', block.id)">+ Изображение</button>
+              <button class="btn mbtn" onclick="deleteBlock(block.id)">Удалить блок</button>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        <br>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+  {% if request.user.is_superuser %}
+  <script>
+    function addBlock(type, after_id) {
+      const request = new XMLHttpRequest()
+      request.open('POST', '{% url "admin_add_block" page.id %}', true)
+      request.setRequestHeader('X-CSRFToken', "")
+      request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+      request.send(JSON.stringify({
+        type: type,
+        after_id: after_id
+      }))
+    }
+  </script>
+  {% endif %}
+{% endblock %}

@@ -13,18 +13,30 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
+# from django.contrib import admin
+from django.urls import path, include
 from django.conf.urls.static import static
+from django.contrib.auth.views import PasswordChangeView
 
 from isavkorane import settings
-from main import views
+from main import views, admin
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
+    path('_/add_page/', admin.add_page_page, name='admin_add_page'),
+    path('_/pages/<int:page_id>/new_block/', admin.add_block_page, name='admin_add_block'),
+
+    path('accounts/password_change/', PasswordChangeView.as_view(
+        template_name='registration/password_change.html'), name='password_change'),
+    path('accounts/login/', views.LoginView.as_view(
+        template_name='registration/login.html'), name='login'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('registration/', views.RegistrationView.as_view(
+        template_name='registration/registration.html'), name='registration'),
+
     path('load_images/', views.load_images_page, name='load_images'),
     path('', views.index_page, name='index'),
-    path('russian/', views.russian_page, name='russian'),
+    path('pages/<str:name>/', views.router_pages, name='router'),
 ]
 
 if settings.DEBUG:

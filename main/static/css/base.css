@@ -62,3 +62,25 @@ header h1 {
     box-shadow: 0 0 20px rgb(0 0 0 / 20%);
     border-radius: 5px;
 }
+
+.mcard-text {
+    font-family: "Arial", "sans-serif";
+    font-size: 9.0pt;
+    line-height: 105%;
+}
+
+.mbtn {
+    background-color: #fefdfa;
+    border: 1px solid #aab123;
+    box-shadow: 0 0 5px rgb(0 0 0 / 20%);
+    border-radius: 3px;
+}
+
+.mbtn-sm {
+    background-color: #fefdfa;
+    border: 1px solid #aab123;
+    box-shadow: 0 0 5px rgb(0 0 0 / 20%);
+    border-radius: 3px;
+    font-family: "Arial", "sans-serif";
+    font-size: 9.0pt;
+}
