@@ -1,7 +1,98 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-{{ csrf_token }}
+
+<script>
+  var fblock = template`
+      <div class="row">
+        <div class="col">
+          <div class="text-center">
+            ${'type_content'}
+          </div>
+        </div>
+      </div>
+      <input type="hidden" name="prev_block_id" value="block_${'prev_block_id'}">
+      {% if request.user.is_superuser %}
+        <div class="mt-2 row justify-content-center">
+          <div style="width: max-content;">
+            <button class="btn mbtn-sm" onclick="addBlock('text', ${'block_id'})">+ Текст</button>
+            <button class="btn mbtn-sm" onclick="addBlock('image', ${'block_id'})">+ Изображение</button>
+            <button class="btn mbtn-sm" onclick="deleteBlock(${'block_id'})">Удалить блок</button>
+          </div>
+        </div>
+      {% endif %}
+  `
+  var fimage = template`
+    <img class="mcard-img" src="${'image_path'}" id="image_${'block_id'}" alt="Нет изображения" style="max-width: 100%">
+    {% if request.user.is_superuser %}
+      <div class="row justify-content-center mt-1">
+        <div class="d-flex" style="width: max-content">
+          <input type="file" class="form-control" style="width: 200px; margin-right: 0.2rem;"
+            id="new_image_${'block_id'}" onchange="updateImage('new_image_${'block_id'}', 'image_${'block_id'}')">
+          <button class="btn mbtn-sm" onclick="saveImage(${'block_id'}, 'new_image_${'block_id'}')" style="display: inline-block">Сохранить</button>
+        </div>
+      </div>
+    {% endif %}
+  `
+  var ftext = template`
+    <div class="mcard-text">
+      {% if request.user.is_superuser %}
+        <div class="text-end">
+          <textarea class="form-control" name="text">${'text'}</textarea>
+          <button class="btn mbtn-sm mt-1" onclick="saveText(${'block_id'})">Сохранить</button>
+        </div>
+      {% else %}
+        <p>${'text'}</p>
+      {% endif %}
+    </div>
+  `
+  
+  function showBlock(block_id, typeBlock, text, image_path, prev_block_id) {
+    var type;
+    if (typeBlock == "{{TypeBlock.TEXT}}")
+      type = ftext({'text': text, "block_id": block_id})
+    else if (typeBlock == "{{TypeBlock.IMAGE}}")
+      type = fimage({"image_path": image_path, "block_id": block_id})
+    
+    var block_content = fblock({"type_content": type, "block_id": block_id, "prev_block_id": prev_block_id})
+    var block_div = document.createElement("div")
+    block_div.id = `block_${block_id}`
+    block_div.classList.add("mcard-content", "my-3")
+    block_div.innerHTML = block_content
+
+    const blocks_els = document.getElementById("blocks").children
+    var blocks = []
+    if (prev_block_id == 0) blocks.push(block_div)
+    for (var i = 0; i < blocks_els.length; i++) blocks.push(blocks_els[i])
+
+    if (prev_block_id != 0) blocks.push(block_div)
+
+    for (var i = 0; i < blocks.length; i++) {
+      for (var j = 1; j < blocks.length; j++) {
+        if (i == j) continue
+        var j_block_prev_id = document.querySelector(`#${blocks[j].id} input[name=prev_block_id]`)
+        if (j_block_prev_id) j_block_prev_id = j_block_prev_id.value
+        else continue
+        if (blocks[i].id == j_block_prev_id && i+1 != j) {
+          if (i > j) {
+            var t = blocks.slice(0, j)
+            t.push(blocks[i], ...blocks.slice(j, i), ...blocks.slice(i+1))
+          } else {
+            var t = blocks.slice(0, i+1)
+            t.push(blocks[j], ...blocks.slice(i+1, j), ...blocks.slice(j+1))
+          }
+          blocks = t
+        }
+      }
+    }
+
+    document.getElementById("blocks").innerHTML = ""
+    for (var i = 0; i < blocks.length; i++) {
+      document.getElementById("blocks").appendChild(blocks[i])
+    }
+  }
+</script>
+
 <div class="row">
   <div class="col">
     <div class="mcard">
@@ -14,43 +105,20 @@
         </div>
       </div>
       {% endif %}
-      {% for block in page.block_set.all %}
-        <div class="mcard-content" id="block_{{ block.id }}">
-          <div class="row">
-            <div class="col">
-              <div class="text-center">
-                {% if block.type == TypeBlock.IMAGE %}
-                  <img class="mcard-img" src="/media/{{ block.image.path }}">
-                  {% if request.user.is_superuser %}
-                    <input type="image" class="form-control">
-                    <button class="btn mbtn-sm" onclick="replaceImage(block.id)" style="display: inline-block">Сохранить</button>
-                  {% endif %}
-                {% elif block.type == TypeBlock.TEXT %}
-                  <div class="mcard-text">
-                    {% if request.user.is_superuser %}
-                      <textarea class="form-control">
-                        {{ block.text }}
-                      </textarea>
-                    {% else %}
-                      <pre>{{ block.text }}</pre>
-                    {% endif %}
-                  </div>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-          {% if request.user.is_superuser %}
-          <div class="row justify-content-center">
-            <div class="col">
-              <button class="btn mbtn" onclick="addBlock('text', block.id)">+ Текст</button>
-              <button class="btn mbtn" onclick="addBlock('image', block.id)">+ Изображение</button>
-              <button class="btn mbtn" onclick="deleteBlock(block.id)">Удалить блок</button>
-            </div>
-          </div>
-          {% endif %}
+      <div class="row">
+        <div class="col" id="blocks">
+
         </div>
-        <br>
-      {% endfor %}
+      </div>
+      <script>
+        {% for block in page.block_set.all %}
+          showBlock(
+            "{{block.id}}", "{{block.type}}", "{{block.text}}",
+            "{% if block.image %}{{block.image.url}}{% else %}{% endif %}",
+            "{{block.prev_block_id}}"
+          )
+        {% endfor %}
+      </script>
     </div>
   </div>
 </div>
@@ -60,15 +128,111 @@
 {% block extra_js %}
   {% if request.user.is_superuser %}
   <script>
-    function addBlock(type, after_id) {
-      const request = new XMLHttpRequest()
+    function addBlock(type, prev_block_id) {
+      var request = new XMLHttpRequest()
       request.open('POST', '{% url "admin_add_block" page.id %}', true)
-      request.setRequestHeader('X-CSRFToken', "")
-      request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+      request.setRequestHeader('X-CSRFToken', "{{csrf_token}}")
+      request.setRequestHeader('Content-Type', 'application/json')
       request.send(JSON.stringify({
-        type: type,
-        after_id: after_id
+        "type": type,
+        "prev_block_id": prev_block_id
       }))
+      request.onreadystatechange = function() {
+        if (request.readyState == XMLHttpRequest.DONE) {
+          var data = JSON.parse(request.responseText)
+          if (data["status"] == 200) {
+            document.location.reload()
+          }
+        }
+      }
+    }
+
+    function deleteBlock(block_id) {
+      var request = new XMLHttpRequest()
+      request.open('POST', '{% url "admin_delete_block" %}', true)
+      request.setRequestHeader('X-CSRFToken', "{{csrf_token}}")
+      request.setRequestHeader('Content-Type', 'application/json')
+      request.send(JSON.stringify({
+        "block_id": block_id
+      }))
+      request.onreadystatechange = function() {
+        if (request.readyState == XMLHttpRequest.DONE) {
+          var data = JSON.parse(request.responseText)
+          if (data["status"] == 200) {
+            document.location.reload()
+          }
+        }
+      }
+    }
+  
+    function saveText(block_id) {
+      var request = new XMLHttpRequest()
+      request.open('POST', '{% url "admin_block_set_text" %}', true)
+      request.setRequestHeader('X-CSRFToken', "{{csrf_token}}")
+      request.setRequestHeader('Content-Type', 'application/json')
+      var text = document.querySelector(`#block_${block_id} textarea[name=text]`).value
+      request.send(JSON.stringify({
+        "block_id": block_id,
+        "text": text
+      }))
+      request.onreadystatechange = function() {
+        if (request.readyState == XMLHttpRequest.DONE) {
+          var data = JSON.parse(request.responseText)
+          if (data["status"] == 200) {
+            console.log("OK")
+          }
+        }
+      }
+    }
+
+    function updateImage(input_id, target_id) {
+      var input = document.getElementById(input_id)
+      if (input.files && input.files[0]) {
+        var img = new Image()
+        img.src = URL.createObjectURL(input.files[0])
+        img.onload = function() {
+          var picWidth = this.width
+          var picHeight = this.height
+          var canvas = document.createElement("canvas")
+          canvas.width = picWidth
+          canvas.height = picHeight
+          var ctx = canvas.getContext("2d")
+          ctx.drawImage(img, 0, 0, picWidth, picHeight);
+
+          document.querySelector('#' + target_id).src = canvas.toDataURL(input.files[0].type);
+          document.querySelector('#' + target_id).style["width"] = `${this.width}px`
+        }
+      }
+    }
+
+    function saveImage(block_id, input_id) {
+      var request = new XMLHttpRequest()
+      request.open('POST', '{% url "admin_block_set_image" %}', true)
+      request.setRequestHeader('X-CSRFToken', "{{csrf_token}}")
+      request.setRequestHeader('Content-Type', 'application/json')
+      
+      var input = document.getElementById(input_id)
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.readAsDataURL(input.files[0]);
+        reader.onload = function (e) {
+          var formData = new FormData()
+          formData.append("image", e.target.result)
+          formData.append("block_id", String(block_id))
+          request.send(JSON.stringify({
+            "image": e.target.result,
+            "block_id": block_id
+          }))
+          request.onreadystatechange = function() {
+            if (request.readyState == XMLHttpRequest.DONE) {
+              var data = JSON.parse(request.responseText)
+              if (data["status"] == 200) {
+                console.log("OK")
+              }
+            }
+          }
+        }
+      }
     }
   </script>
   {% endif %}

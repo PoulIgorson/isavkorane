@@ -25,6 +25,9 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     path('_/add_page/', admin.add_page_page, name='admin_add_page'),
     path('_/pages/<int:page_id>/new_block/', admin.add_block_page, name='admin_add_block'),
+    path('_/pages/delete_block/', admin.delete_block_page, name='admin_delete_block'),
+    path('_/pages/block_set_text', admin.block_set_text_page, name='admin_block_set_text'),
+    path('_/pages/block_set_image', admin.block_set_image_page, name='admin_block_set_image'),
 
     path('accounts/password_change/', PasswordChangeView.as_view(
         template_name='registration/password_change.html'), name='password_change'),

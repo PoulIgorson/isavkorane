@@ -19,8 +19,8 @@ class Page(models.Model):
 
 
 class TypeBlock(models.Choices):
-    TEXT = "Текст"
-    IMAGE = "Изображение"
+    TEXT = "text"
+    IMAGE = "image"
 
 
 class Block(models.Model):
@@ -28,3 +28,17 @@ class Block(models.Model):
     page = models.ForeignKey(to=Page, on_delete=models.CASCADE)
     text = models.TextField(blank=True)
     image = models.ImageField(upload_to="pages", blank=True)
+
+    prev_block_id = models.IntegerField(blank=True, default=0)
+
+    def as_dict(self):
+        data = {
+            "type": str(self.type),
+            "page_id": self.page.id,
+            "text": self.text,
+            "prev_block_id": self.prev_block_id
+        }
+        if self.image:
+            data["image_path"] = self.image.path
+            data["image_utl"] = self.image.url
+        return data
