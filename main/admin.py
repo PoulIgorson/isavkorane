@@ -16,18 +16,22 @@ from main.support import *
 from main.models import TypeBlock, Block, Page
 from main.forms import CreatePageForm
 
+from main.views import get_pages_context
+
 
 @login_required
 def add_page_page(request):
-    context = get_base_context(request, 'Добавление страницы', 'add_page')
+    context = get_pages_context(request, 'Добавление страницы', 'add_page')
     form = CreatePageForm()
     if request.method == "POST":
         form = CreatePageForm(request.POST)
         if form.is_valid():
             if not Page.objects.filter(name=form.cleaned_data["name"]).count():
-                print(Page.objects.create(
+                Page.objects.create(
                     name=form.cleaned_data["name"],
-                ))
+                    header=form.cleaned_data["header"],
+                    url=f'/pages/{form.cleaned_data["name"]}'
+                )
                 return redirect('router', name=form.cleaned_data["name"])
             else:
                 form.errors["name"] = ["Такая страница уже существует"]

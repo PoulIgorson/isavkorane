@@ -1,12 +1,6 @@
 def get_menu_context():
     return [
         {"url_name": 'index', "name": "Русский", 'active': False},
-        {"url_name": 'index', "name": "Татарча (Татарский)", 'active': False},
-        {"url_name": 'index', "name": "Башкирский", 'active': False},
-        {"url_name": 'index', "name": "O'zbek (Узбекский)", 'active': False},
-        {"url_name": 'index', "name": "Чеченский", 'active': False},
-        {"url_name": 'index', "name": "English (Английский)", 'active': False},
-        {"url_name": 'index', "name": "Четыре духовные истины", 'active': False},
     ]
 
 def get_id_page_in_menu(menu, url_name):

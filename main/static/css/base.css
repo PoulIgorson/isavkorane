@@ -16,17 +16,22 @@ header h1 {
 
 .nav-item {
     font: normal bold 20px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
-    color:#333333
+    color:#333333;
+    width: max-content;
 }
 .nav-item :hover {
     color: #fcfbf5;
 }
 .nav-link {
-    color:#333333
+    color:#333333;
 }
 .nav-link-selected {
     background: transparent url(//www.blogblog.com/1kt/awesomeinc/tabs_gradient_light.png) repeat-x scroll 0 -100px;
     color: #fcfbf5;
+}
+.dropdown-item-selected {
+    background: transparent url(//www.blogblog.com/1kt/awesomeinc/tabs_gradient_light.png) repeat-x scroll 0 -100px;
+    color: #757572;
 }
 
 .mcard {

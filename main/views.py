@@ -11,14 +11,13 @@ from main.support import *
 from main.models import TypeBlock, Page
 from main.forms import RegistrationForm, LoginForm
 
-
 def get_pages(request, pagename):
     return [
-        {"pagename": page.name, "active": page.name == pagename} for page in Page.objects.all()
+        {"name": page.name, "url": page.url, "active": page.name == pagename, "id": page.id} for page in Page.objects.all()
     ]
 
-def get_pages_context(request, pagename):
-    context = get_base_context(request, pagename, "")
+def get_pages_context(request, pagename, url_name=""):
+    context = get_base_context(request, pagename, url_name)
     context.update({
         'pages': get_pages(request, pagename),
         'TypeBlock': TypeBlock

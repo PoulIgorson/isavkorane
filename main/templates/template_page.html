@@ -42,7 +42,7 @@
           <button class="btn mbtn-sm mt-1" onclick="saveText(${'block_id'})">Сохранить</button>
         </div>
       {% else %}
-        <p>${'text'}</p>
+        <pre class="text-start">${'text'}<pre>
       {% endif %}
     </div>
   `
@@ -113,7 +113,7 @@
       <script>
         {% for block in page.block_set.all %}
           showBlock(
-            "{{block.id}}", "{{block.type}}", "{{block.text}}",
+            "{{block.id}}", "{{block.type}}", `{{block.text}}`,
             "{% if block.image %}{{block.image.url}}{% else %}{% endif %}",
             "{{block.prev_block_id}}"
           )

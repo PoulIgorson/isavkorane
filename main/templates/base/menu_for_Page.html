@@ -1,0 +1,45 @@
+<nav class="flex-nowrap">
+  <nav class="navbar navbar-expand-md flex-nowrap">
+    <div class="container-fluid flex-nowrap">
+      <!--<a class="navbar-brand" href="{% url 'index' %}">isavkorane</a>-->
+      <div class="flex-nowrap">
+        <ul class="navbar-nav flex-nowrap me-auto mb-2 mb-md-0">
+          {% for page in pages %}
+          <li class="nav-item px-3" id="page_{{ page.id }}">
+            <a class="nav-link {% if page.active %}nav-link-selected{% endif %}" href="{{ page.url }}">{{ page.name }}</a>
+          </li>
+          {% endfor %}
+          <li class="nav-item dropdown" id="menu_short">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Другие</a>
+            <ul class="dropdown-menu mcard p-0">
+              {% for page in pages %}
+              <li class="nav-item px-3" id="page_{{ page.id }}_short">
+                <a class="dropdown-item {% if page.active %}dropdown-item-selected disabled{% endif %}" href="{{ page.url }}">{{ page.name }}</a>
+              </li>
+              {% endfor %}
+            </ul>
+          </li>
+        </ul>
+        <script>
+          var widths = {}
+          function f(){
+            var width = document.getElementById("menu_short").clientWidth
+            var contacts = document.getElementById("contacts")
+            "{% for page in pages %}"
+              var width_ = document.getElementById("page_{{page.id}}").clientWidth
+              width += width_ || widths["page_{{page.id}}"]
+              if (width_ != 0)
+                widths["page_{{page.id}}"] = document.getElementById("page_{{page.id}}").clientWidth
+              if (width > contacts.clientWidth) {
+                document.getElementById("page_{{page.id}}").style["display"] = "none"
+              } else {
+                document.getElementById("page_{{page.id}}").style["display"] = "block"
+              }
+            "{% endfor %}"
+          }
+          setInterval(f, 1000)
+        </script>
+      </div>
+    </div>
+  </nav>
+</nav>
