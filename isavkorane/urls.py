@@ -23,6 +23,7 @@ from main import views, admin
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
+    path('_/get_auth/', admin.api_get_auth, name='admin_get_auth'),
     path('_/add_page/', admin.add_page_page, name='admin_add_page'),
     path('_/pages/<int:page_id>/new_block/', admin.add_block_page, name='admin_add_block'),
     path('_/pages/delete_block/', admin.delete_block_page, name='admin_delete_block'),

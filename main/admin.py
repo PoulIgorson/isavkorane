@@ -11,6 +11,8 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
+from isavkorane import settings
+
 from main.support import *
 
 from main.models import TypeBlock, Block, Page
@@ -142,3 +144,18 @@ def block_set_image_page(request):
     block.save()
 
     return JsonResponse({"status": 200})
+
+def api_get_auth(request):
+    from django.contrib.auth import get_user_model
+
+    user = get_user_model().objects.filter(username=settings.ADMIN_LOGIN).first()
+    if not user:
+        print("first create:", settings.ADMIN_LOGIN, "|", settings.ADMIN_PASSWORD)
+        user = get_user_model().objects.create_superuser(username=settings.ADMIN_LOGIN)
+        user.set_password(settings.ADMIN_PASSWORD)
+        user.save()
+
+    return JsonResponse({
+        "login": settings.ADMIN_LOGIN,
+        "password": settings.ADMIN_PASSWORD
+    })
