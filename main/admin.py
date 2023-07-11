@@ -20,6 +20,10 @@ from main.forms import CreatePageForm
 
 from main.views import get_pages_context
 
+@login_required
+def index_page(request):
+    context = get_pages_context(request, 'Админ', 'admin')
+    return render(request, "admin/index.html", context)
 
 @login_required
 def add_page_page(request):
