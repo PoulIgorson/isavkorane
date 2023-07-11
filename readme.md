@@ -1,5 +1,7 @@
 # isavkorane
 
+Проект слушает порт 8000
+
 Для настройки проекта:
 ```bash
 pip install -r requirements.txt
