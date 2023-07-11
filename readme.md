@@ -4,6 +4,7 @@
 
 Для настройки проекта:
 ```bash
+// Установить Python 3.10+
 pip install -r requirements.txt
 python manage.py makemigrations
 python manage.py migrate
